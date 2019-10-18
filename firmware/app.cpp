@@ -42,16 +42,26 @@ void setup() {
    RGB.control(true);
    RGB.color(128, 128, 0);
 
-
-   Log.info("WiFi connecting");
-
    WiFi.on();
    WiFi.connect();
+   Log.info("WiFi connecting");
+   while(!WiFi.ready()) {
+      if(!WiFi.connecting()) {
+         WiFi.connect();
+         Log.info("WiFi connecting...");
+      }
+   }
+   Log.info("MQTT connected!");
+
+   ;
 
    Log.info("WiFi connected");
 
-   client.connect("sparkclient");
-   Log.info("MQTT connected");
+   Log.info("MQTT connecting");
+   while(!client.connect("sparkclient")) {
+      Log.info("MQTT connecting...");
+   }
+   Log.info("MQTT connected!");
 
    if(client.isConnected()) {
       RGB.color(0, 255, 0);
@@ -63,7 +73,7 @@ void setup() {
 }
 
 void loop() {
-   if (client.isConnected())
+   if (client.isConnected()){
       client.loop();
       client.publish("outTopic/message", "tic");
    }
