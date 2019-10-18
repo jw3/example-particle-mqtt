@@ -16,7 +16,9 @@ void callback(char* topic, byte* payload, unsigned int length);
  * exp) iot.eclipse.org is Eclipse Open MQTT Broker: https://iot.eclipse.org/getting-started
  * MQTT client("iot.eclipse.org", 1883, callback);
  **/
-MQTT client("server_name", 1883, callback);
+byte server[] = {192, 168, 0, 10};
+MQTT client(server, 1883, callback);
+SerialLogHandler logHandler;
 
 // recieve message
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -38,18 +40,31 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void setup() {
    RGB.control(true);
+   RGB.color(128, 128, 0);
 
-   // connect to the server
+
+   Log.info("WiFi connecting");
+
+   WiFi.on();
+   WiFi.connect();
+
+   Log.info("WiFi connected");
+
    client.connect("sparkclient");
+   Log.info("MQTT connected");
 
-   // publish/subscribe
-   if (client.isConnected()) {
-      client.publish("outTopic/message","hello world");
+   if(client.isConnected()) {
+      RGB.color(0, 255, 0);
+      client.publish("outTopic/message", "hello world");
       client.subscribe("inTopic/message");
    }
+   else
+      RGB.color(255, 0, 0);
 }
 
 void loop() {
    if (client.isConnected())
       client.loop();
+      client.publish("outTopic/message", "tic");
+   }
 }
