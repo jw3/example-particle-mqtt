@@ -26,7 +26,7 @@ namespace particle
    struct MQTTCloud
    {
       explicit MQTTCloud(const char* broker, uint16_t port = 1883)
-            : client(const_cast<char*>(broker), port, std::bind(&MQTTCloud::callback, this, _1, _2, _3)) {
+            : client(const_cast<char*>(broker), port, 5, std::bind(&MQTTCloud::callback, this, _1, _2, _3)) {
       }
 
       ~MQTTCloud() {
