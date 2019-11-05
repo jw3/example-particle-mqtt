@@ -3,7 +3,7 @@
 if [ -z "$1" ]; then echo "usage: $0 <platform>"; exit 1; fi
 
 readonly platform="$1"
-cmake_args="-DPLATFORM=$platform_arg"
+cmake_args="-DPLATFORM=$platform"
 readonly builddir="build-$platform"
 
 readonly cross_compiler_root=${CROSS_COMPILER_ROOT:-/usr/local/gcc-arm}
