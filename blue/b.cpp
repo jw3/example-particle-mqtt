@@ -1,7 +1,7 @@
 #include <Particle.h>
 #include <MQTT.h>
 
-SYSTEM_MODE(MANUAL);
+SYSTEM_MODE(MANUAL)
 
 #ifndef BROKER
 #define BROKER "raspberrypi"
@@ -27,19 +27,21 @@ void callback(char* topic, byte* payload, unsigned int length) {
       RGB.color(0, 255, 0);
 }
 
-void button_handler(system_event_t event, int duration, void*) {
-   Log.info("%s button", color);
-
-   if(!duration) {
-      RGB.color(0, 0, 255);
-      client.publish(topic, color);
+bool ButtonPressed = false;
+bool WasPressed() {
+   if(ButtonPressed) {
+      ButtonPressed = false;
+      return true;
    }
+   return false;
+}
+void button_handler(system_event_t event, int duration) {
+   if(!duration && !ButtonPressed) ButtonPressed = true;
 }
 
 void setup() {
    RGB.control(true);
    RGB.color(255, 255, 255);
-   System.on(button_status, button_handler);
 
    WiFi.on();
    WiFi.connect();
@@ -61,11 +63,15 @@ void setup() {
 
    client.subscribe(topic);
    RGB.color(0, 0, 255);
+
+   System.on(button_status, button_handler);
 }
 
 void loop() {
-   if(client.isConnected()) client.loop();
-   Log.info("publish %s", color);
-   client.publish(topic, color);
-   delay(1000);
+   if(WasPressed()) {
+      RGB.color(0, 0, 255);
+      client.publish(topic, color);
+   }
+   if(client.isConnected())
+      client.loop();
 }
