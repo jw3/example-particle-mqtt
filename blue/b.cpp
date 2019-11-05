@@ -11,7 +11,7 @@ void callback(char* topic, byte* payload, unsigned int length);
 
 MQTT client(BROKER, 1883, callback);
 SerialLogHandler logHandler;
-constexpr const char* topic = "/color";
+constexpr const char* topic = "/E/color";
 constexpr const char* color = "BLUE";
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -25,6 +25,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
       RGB.color(255, 0, 0);
    else if(!strcmp(p, "GREEN"))
       RGB.color(0, 255, 0);
+   else if(!strcmp(p, "ORANGE"))
+      RGB.color(255, 128, 0);
 }
 
 bool ButtonPressed = false;

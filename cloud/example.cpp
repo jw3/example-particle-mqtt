@@ -50,6 +50,7 @@ namespace particle
          return client.subscribe(e.c_str());
       }
 
+      bool loop() { return client.loop(); }
       bool connect(const char* id) { return client.connect(id); }
       bool isConnected() { return client.isConnected(); }
 
@@ -80,13 +81,27 @@ namespace particle
 
 particle::MQTTCloud Cloud(BROKER);
 constexpr const char* topic = "color";
-constexpr const char* color = "RED";
+constexpr const char* color = "ORANGE";
 
 void callback(const char* t, const char* e) {
    if(!strcmp(e, "BLUE"))
       RGB.color(0, 0, 255);
    else if(!strcmp(e, "GREEN"))
       RGB.color(0, 255, 0);
+   else if(!strcmp(e, "RED"))
+      RGB.color(255, 0, 0);
+}
+
+bool ButtonPressed = false;
+bool WasPressed() {
+   if(ButtonPressed) {
+      ButtonPressed = false;
+      return true;
+   }
+   return false;
+}
+void button_handler(system_event_t event, int duration) {
+   if(!duration && !ButtonPressed) ButtonPressed = true;
 }
 
 void setup() {
@@ -112,9 +127,16 @@ void setup() {
    Log.info("Cloud connected!");
 
    Cloud.subscribe(topic, callback);
-   RGB.color(255, 0, 0);
+   RGB.color(255, 128, 0);
+
+   System.on(button_status, button_handler);
 }
 
 void loop() {
-
+   if(WasPressed()) {
+      RGB.color(255, 128, 0);
+      Cloud.publish(topic, color, PRIVATE);
+   }
+   if(Cloud.isConnected())
+      Cloud.loop();
 }
