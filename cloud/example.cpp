@@ -8,6 +8,8 @@ SYSTEM_MODE(MANUAL);
 #define BROKER "raspberrypi"
 #endif
 
+auto id = System.deviceID().substring(0, 6);
+
 using std::placeholders::_1;
 using std::placeholders::_2;
 using std::placeholders::_3;
@@ -19,7 +21,7 @@ typedef std::function<void(const char*, const char*)> CloudEventHandler;
 typedef std::shared_ptr<CloudEventHandler> CloudEventHandlerPtr;
 
 const std::string E("/E/");
-const std::string Fn("/F/");
+const std::string Fn(String::format("/F/%s/", id.c_str()));
 
 namespace particle
 {
