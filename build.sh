@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
-if [ -z "$1" ]; then echo "usage: $0 <platform>"; exit 1; fi
+if [ -z "$1" ]; then echo "usage: $0 <platform> [color]"; exit 1; fi
 
 readonly platform="$1"
 cmake_args="-DPLATFORM=$platform"
+
+if [[ ! -z "$2" ]]; then
+  cmake_args+=" -DCOLOR=\"$2\""
+fi
+
 readonly builddir="build-$platform"
 
 readonly cross_compiler_root=${CROSS_COMPILER_ROOT:-/usr/local/gcc-arm}

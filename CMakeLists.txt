@@ -29,8 +29,13 @@ conan_basic_setup(NO_OUTPUT_DIRS)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
 
 find_package(Particle)
-
 include(MQTT)
+
+option(COLOR OFF)
+if (COLOR)
+    add_definitions(-DCOLOR=${COLOR})
+endif (COLOR)
+
 add_particle_remote_app(firmware MQTT)
 add_particle_remote_app(red MQTT)
 add_particle_remote_app(green MQTT)
