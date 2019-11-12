@@ -36,19 +36,25 @@ void button_handler(system_event_t event, int duration) {
 }
 
 void setup() {
+#ifdef ETH
+   NetworkClass& Net = Ethernet;
+#else
+   NetworkClass& Net = WiFi;
+#endif
+
    RGB.control(true);
    setRGB("white");
 
-   WiFi.on();
-   WiFi.connect();
-   Log.info("WiFi connecting");
-   while(!WiFi.ready()) {
-      if(!WiFi.connecting()) {
-         WiFi.connect();
-         Log.info("WiFi connecting...");
+   Net.on();
+   Net.connect();
+   Log.info("Network connecting");
+   while(!Ethernet.ready()) {
+      if(!Ethernet.connecting()) {
+         Ethernet.connect();
+         Log.info("Network connecting...");
       }
    }
-   Log.info("WiFi connected");
+   Log.info("Network connected");
 
    Log.info("Cloud connecting");
    while(!Cloud.isConnected()) {
