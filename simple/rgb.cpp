@@ -1,7 +1,12 @@
 #include <Particle.h>
 #include <MQTT.h>
+#include <colormap.h>
 
 SYSTEM_MODE(MANUAL)
+
+#ifndef COLOR
+#define COLOR "magicpink"
+#endif
 
 #ifndef BROKER
 #define BROKER "raspberrypi"
@@ -12,21 +17,16 @@ void callback(char* topic, byte* payload, unsigned int length);
 MQTT client(BROKER, 1883, callback);
 SerialLogHandler logHandler;
 constexpr const char* topic = "/E/color";
-constexpr const char* color = "RED";
+constexpr const char* color = COLOR;
 
-void callback(char* topic, byte* payload, unsigned int length) {
-   Log.info("callback", color);
+void callback(char* t, byte* e, unsigned int length) {
+   Log.info("callback %s", color);
 
    char p[length + 1];
-   memcpy(p, payload, length);
+   memcpy(p, e, length);
    p[length] = NULL;
 
-   if(!strcmp(p, "BLUE"))
-      RGB.color(0, 0, 255);
-   else if(!strcmp(p, "GREEN"))
-      RGB.color(0, 255, 0);
-   else if(!strcmp(p, "ORANGE"))
-      RGB.color(255, 128, 0);
+   setRGB(p);
 }
 
 bool ButtonPressed = false;
@@ -43,7 +43,7 @@ void button_handler(system_event_t event, int duration) {
 
 void setup() {
    RGB.control(true);
-   RGB.color(255, 255, 255);
+   setRGB("white");
 
    WiFi.on();
    WiFi.connect();
@@ -64,14 +64,14 @@ void setup() {
    Log.info("MQTT connected!");
 
    client.subscribe(topic);
-   RGB.color(255, 0, 0);
+   setRGB(color);
 
    System.on(button_status, button_handler);
 }
 
 void loop() {
    if(WasPressed()) {
-      RGB.color(255, 0, 0);
+      setRGB(color);
       client.publish(topic, color);
    }
    if(client.isConnected())

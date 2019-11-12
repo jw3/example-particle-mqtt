@@ -38,8 +38,6 @@ endif (COLOR)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-add_particle_remote_app(firmware MQTT)
-add_particle_remote_app(red MQTT)
-add_particle_remote_app(green MQTT)
-add_particle_remote_app(blue MQTT)
+add_particle_remote_app(simple MQTT)
 add_particle_remote_app(cloud MQTT)
+add_particle_remote_app(raw MQTT)

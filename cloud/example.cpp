@@ -107,7 +107,7 @@ void button_handler(system_event_t event, int duration) {
 
 void setup() {
    RGB.control(true);
-   setRGB(color);
+   setRGB("white");
 
    WiFi.on();
    WiFi.connect();
