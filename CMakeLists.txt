@@ -36,6 +36,8 @@ if (COLOR)
     add_definitions(-DCOLOR=${COLOR})
 endif (COLOR)
 
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
 add_particle_remote_app(firmware MQTT)
 add_particle_remote_app(red MQTT)
 add_particle_remote_app(green MQTT)
