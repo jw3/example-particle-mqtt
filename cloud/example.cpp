@@ -14,6 +14,7 @@ SYSTEM_MODE(MANUAL)
 #define BROKER "raspberrypi"
 #endif
 
+SerialLogHandler logHandler;
 particle::MQTTCloud Cloud(BROKER);
 constexpr const char* topic = "color";
 constexpr const char* color = COLOR;
