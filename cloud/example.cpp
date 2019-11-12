@@ -2,7 +2,11 @@
 #include <MQTT.h>
 #include <map>
 
-SYSTEM_MODE(MANUAL);
+SYSTEM_MODE(MANUAL)
+
+#ifndef COLOR
+#define COLOR "magicpink"
+#endif
 
 #ifndef BROKER
 #define BROKER "raspberrypi"
@@ -22,6 +26,23 @@ typedef std::shared_ptr<CloudEventHandler> CloudEventHandlerPtr;
 
 const std::string E("/E/");
 const std::string Fn(String::format("/F/%s/", id.c_str()));
+
+const std::map<std::string, std::array<uint8_t, 3>> colormap = {
+      {"red",       {255, 0,   0}},
+      {"blue",      {0,   0,   255}},
+      {"green",     {0,   255, 0}},
+      {"white",     {255, 255, 255}},
+      {"orange",    {255, 128, 0}},
+      {"magicpink", {255, 0,   255}}
+};
+
+void setRGB(const std::string& name) {
+   const auto i = colormap.find(name);
+   if(i != colormap.end())
+      RGB.color(std::get<0>(i->second), std::get<1>(i->second), std::get<2>(i->second));
+   else
+      RGB.color(32, 32, 32);
+}
 
 namespace particle
 {
@@ -83,15 +104,10 @@ namespace particle
 
 particle::MQTTCloud Cloud(BROKER);
 constexpr const char* topic = "color";
-constexpr const char* color = "ORANGE";
+constexpr const char* color = COLOR;
 
 void callback(const char* t, const char* e) {
-   if(!strcmp(e, "BLUE"))
-      RGB.color(0, 0, 255);
-   else if(!strcmp(e, "GREEN"))
-      RGB.color(0, 255, 0);
-   else if(!strcmp(e, "RED"))
-      RGB.color(255, 0, 0);
+   setRGB(e);
 }
 
 bool ButtonPressed = false;
@@ -108,7 +124,7 @@ void button_handler(system_event_t event, int duration) {
 
 void setup() {
    RGB.control(true);
-   RGB.color(255, 255, 255);
+   setRGB(color);
 
    WiFi.on();
    WiFi.connect();
@@ -129,14 +145,14 @@ void setup() {
    Log.info("Cloud connected!");
 
    Cloud.subscribe(topic, callback);
-   RGB.color(255, 128, 0);
+   setRGB(color);
 
    System.on(button_status, button_handler);
 }
 
 void loop() {
    if(WasPressed()) {
-      RGB.color(255, 128, 0);
+      setRGB(color);
       Cloud.publish(topic, color, PRIVATE);
    }
    if(Cloud.isConnected())
