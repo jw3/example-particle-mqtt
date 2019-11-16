@@ -40,6 +40,11 @@ namespace particle
          return client.subscribe(e.c_str());
       }
 
+      bool function(const char* funcKey, user_function_int_str_t func, void* reserved = nullptr) {
+         auto f = std::function<user_function_int_str_t>(func);
+         return function(funcKey, f);
+      }
+
       bool function(const char* funcKey, user_std_function_int_str_t& func, void* reserved = nullptr) {
          const auto e = Fn + funcKey;
          functions[e] = std::make_shared<CloudFunc>(func);

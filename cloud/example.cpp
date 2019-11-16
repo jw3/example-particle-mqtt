@@ -35,6 +35,13 @@ void button_handler(system_event_t event, int duration) {
    if(!duration && !ButtonPressed) ButtonPressed = true;
 }
 
+bool d4 = false;
+int d4F(String arg) {
+   d4 = !d4;
+   digitalWrite(D4, d4);
+   return 0;
+}
+
 void setup() {
 #ifdef ETH
    NetworkClass& Net = Ethernet;
@@ -44,6 +51,9 @@ void setup() {
 
    RGB.control(true);
    setRGB("white");
+
+   pinMode(D4, OUTPUT);
+   digitalWrite(D4, LOW);
 
    Net.on();
    Net.connect();
@@ -65,6 +75,8 @@ void setup() {
 
    Cloud.subscribe(topic, callback);
    setRGB(color);
+
+   Cloud.function("d4", d4F);
 
    System.on(button_status, button_handler);
 }
