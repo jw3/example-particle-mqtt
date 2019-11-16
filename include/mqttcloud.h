@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Particle.h>
+#include <MQTT.h>
 #include <map>
 
 auto mqttcloudid = System.deviceID().substring(0, 6);
